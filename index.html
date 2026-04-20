@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=\"en\">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Messenger Test Site - Home Page</title>
     
     <!-- Paste your Messenger snippet here -->
-    <script type="text/javascript" charset="utf-8">
+    <script type=\"text/javascript\" charset=\"utf-8\">
         (function (g, e, n, es, ys) {
             g['_genesysJs'] = e;
             g[e] = g[e] <span class="ea-spoiler"> function () {
@@ -35,6 +35,10 @@
         #chat-btn:hover {
             background-color: #005A9E;
         }
+        #chat-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -42,34 +46,65 @@
     <p>This site is hosted on GitHub Pages for testing.</p>
     
     <nav>
-        <a href="index.html">Home</a> |
-        <a href="products.html">Products</a> |
-        <a href="contact.html">Contact</a>
+        <a href=\"index.html\">Home</a> |
+        <a href=\"products.html\">Products</a> |
+        <a href=\"contact.html\">Contact</a>
     </nav>
     
     <h2>Test Journey Tracking</h2>
     <p>Click the links above to navigate between pages and test Predictive Engagement tracking.</p>
     
     <!-- Chat Button -->
-    <div style="margin-top: 30px;">
-        <button id="chat-btn" onclick="showMessenger()">💬 Chat with Us</button>
+    <div style=\"margin-top: 30px;\">
+        <button id=\"chat-btn\" onclick=\"openMessenger()\" disabled>💬 Loading Chat...</button>
     </div>
     
     <!-- Script to trigger Messenger -->
-    <script type="text/javascript">
-        // Wait for Launcher to be ready
-        Genesys('subscribe', 'Launcher.ready', function() {
-            console.log('Messenger is ready');
-        });
+    <script type=\"text/javascript\">
+        // Wait for Genesys to be available and Messenger to be ready
+        (function() {
+            var checkGenesys = setInterval(function() {
+                if (window.Genesys) {
+                    clearInterval(checkGenesys);
+                    
+                    // Now subscribe to Messenger.ready
+                    Genesys('subscribe', 'Messenger.ready', function() {
+                        console.log('✅ Messenger is ready');
+                        
+                        // Enable the button
+                        var btn = document.getElementById('chat-btn');
+                        btn.disabled = false;
+                        btn.innerText = '💬 Chat with Us';
+                    });
+                }
+            }, 100); // Check every 100ms
+        })();
         
-        // Function to show the Messenger
-        function showMessenger() {
-            Genesys("command", "Launcher.show", null,
+        // Function to open the Messenger
+        function openMessenger() {
+            if (typeof window.Genesys === 'undefined') {
+                alert('Chat is still loading, please wait a moment.');
+                return;
+            }
+            
+            // Open the Messenger window
+            Genesys(\"command\", \"Messenger.open\", null,
                 function() {
-                    console.log('Messenger shown successfully');
+                    console.log('✅ Messenger opened successfully');
                 },
                 function(error) {
-                    console.error('Failed to show Messenger:', error);
+                    console.error('❌ Failed to open Messenger:', error);
+                    
+                    // Try Launcher.show as fallback
+                    Genesys(\"command\", \"Launcher.show\", null,
+                        function() {
+                            console.log('✅ Launcher shown successfully');
+                        },
+                        function(error2) {
+                            console.error('❌ Failed to show Launcher:', error2);
+                            alert('Unable to open chat: ' + error2);
+                        }
+                    );
                 }
             );
         }
