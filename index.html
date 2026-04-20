@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-    <meta charset=\"UTF-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Messenger Test Site - Home Page</title>
     
     <!-- Paste your Messenger snippet here -->
     <script type="text/javascript" charset="utf-8">
         (function (g, e, n, es, ys) {
             g['_genesysJs'] = e;
-            g[e] = g[e] || function () {
-                (g[e].q = g[e].q || []).push(arguments)
+            g[e] = g[e] <span class="ea-spoiler"> function () {
+                (g[e].q = g[e].q </span> []).push(arguments)
             };
             g[e].t = 1 * new Date();
             g[e].c = es;
@@ -20,9 +20,22 @@
             deploymentId: 'ee1faa2a-14c4-4fe4-8b28-03f32b8898be'
         });
     </script>
-   
-
     
+    <style>
+        #chat-btn {
+            background-color: #0078D4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        #chat-btn:hover {
+            background-color: #005A9E;
+        }
+    </style>
 </head>
 <body>
     <h1>🌐 Messenger Test Site - Home Page</h1>
@@ -36,5 +49,30 @@
     
     <h2>Test Journey Tracking</h2>
     <p>Click the links above to navigate between pages and test Predictive Engagement tracking.</p>
+    
+    <!-- Chat Button -->
+    <div style="margin-top: 30px;">
+        <button id="chat-btn" onclick="showMessenger()">💬 Chat with Us</button>
+    </div>
+    
+    <!-- Script to trigger Messenger -->
+    <script type="text/javascript">
+        // Wait for Launcher to be ready
+        Genesys('subscribe', 'Launcher.ready', function() {
+            console.log('Messenger is ready');
+        });
+        
+        // Function to show the Messenger
+        function showMessenger() {
+            Genesys("command", "Launcher.show", null,
+                function() {
+                    console.log('Messenger shown successfully');
+                },
+                function(error) {
+                    console.error('Failed to show Messenger:', error);
+                }
+            );
+        }
+    </script>
 </body>
 </html>
