@@ -14,7 +14,11 @@
             };
             g[e].t = 1 * new Date();
             g[e].c = es;
-            ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+            ys = document.createElement('script'); 
+            ys.async = 1; 
+            ys.src = n; 
+            ys.charset = 'utf-8'; 
+            document.head.appendChild(ys);
         })(window, 'Genesys', 'https://apps.euw2.pure.cloud/genesys-bootstrap/genesys.min.js', {
             environment: 'prod-euw2',
             deploymentId: 'ee1faa2a-14c4-4fe4-8b28-03f32b8898be'
@@ -59,18 +63,15 @@
         <button id="chat-btn" disabled>💬 Loading Chat...</button>
     </div>
     
-    <!-- Script to trigger Messenger -->
-    <script type="text/javascript">
+    <script>
         var chatButton = document.getElementById('chat-btn');
         var messengerReady = false;
         
-        // Wait for Genesys to be available
         var checkInterval = setInterval(function() {
             if (typeof window.Genesys !== 'undefined') {
                 clearInterval(checkInterval);
                 console.log('Genesys loaded');
                 
-                // Subscribe to Messenger.ready
                 window.Genesys('subscribe', 'Messenger.ready', function() {
                     messengerReady = true;
                     console.log('Messenger is ready');
@@ -80,7 +81,6 @@
             }
         }, 100);
         
-        // Function to open Messenger
         chatButton.onclick = function() {
             if (!messengerReady) {
                 alert('Chat is still loading, please wait...');
@@ -89,20 +89,10 @@
             
             window.Genesys('command', 'Messenger.open', null,
                 function() {
-                    console.log('Messenger opened');
+                    console.log('Messenger opened successfully');
                 },
                 function(error) {
-                    console.error('Error opening Messenger:', error);
-                    
-                    // Try Launcher.show as fallback
-                    window.Genesys('command', 'Launcher.show', null,
-                        function() {
-                            console.log('Launcher shown');
-                        },
-                        function(err) {
-                            console.error('Error showing launcher:', err);
-                        }
-                    );
+                    console.error('Error:', error);
                 }
             );
         };
