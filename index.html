@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-    <meta charset=\"UTF-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Messenger Test Site - Home Page</title>
     
-    <!-- Paste your Messenger snippet here -->
-    <script type=\"text/javascript\" charset=\"utf-8\">
+    <!-- Messenger snippet -->
+    <script type="text/javascript" charset="utf-8">
         (function (g, e, n, es, ys) {
             g['_genesysJs'] = e;
             g[e] = g[e] <span class="ea-spoiler"> function () {
@@ -46,68 +46,66 @@
     <p>This site is hosted on GitHub Pages for testing.</p>
     
     <nav>
-        <a href=\"index.html\">Home</a> |
-        <a href=\"products.html\">Products</a> |
-        <a href=\"contact.html\">Contact</a>
+        <a href="index.html">Home</a> |
+        <a href="products.html">Products</a> |
+        <a href="contact.html">Contact</a>
     </nav>
     
     <h2>Test Journey Tracking</h2>
     <p>Click the links above to navigate between pages and test Predictive Engagement tracking.</p>
     
     <!-- Chat Button -->
-    <div style=\"margin-top: 30px;\">
-        <button id=\"chat-btn\" onclick=\"openMessenger()\" disabled>💬 Loading Chat...</button>
+    <div style="margin-top: 30px;">
+        <button id="chat-btn" disabled>💬 Loading Chat...</button>
     </div>
     
     <!-- Script to trigger Messenger -->
-    <script type=\"text/javascript\">
-        // Wait for Genesys to be available and Messenger to be ready
-        (function() {
-            var checkGenesys = setInterval(function() {
-                if (window.Genesys) {
-                    clearInterval(checkGenesys);
-                    
-                    // Now subscribe to Messenger.ready
-                    Genesys('subscribe', 'Messenger.ready', function() {
-                        console.log('✅ Messenger is ready');
-                        
-                        // Enable the button
-                        var btn = document.getElementById('chat-btn');
-                        btn.disabled = false;
-                        btn.innerText = '💬 Chat with Us';
-                    });
-                }
-            }, 100); // Check every 100ms
-        })();
+    <script type="text/javascript">
+        var chatButton = document.getElementById('chat-btn');
+        var messengerReady = false;
         
-        // Function to open the Messenger
-        function openMessenger() {
-            if (typeof window.Genesys === 'undefined') {
-                alert('Chat is still loading, please wait a moment.');
+        // Wait for Genesys to be available
+        var checkInterval = setInterval(function() {
+            if (typeof window.Genesys !== 'undefined') {
+                clearInterval(checkInterval);
+                console.log('Genesys loaded');
+                
+                // Subscribe to Messenger.ready
+                window.Genesys('subscribe', 'Messenger.ready', function() {
+                    messengerReady = true;
+                    console.log('Messenger is ready');
+                    chatButton.disabled = false;
+                    chatButton.innerText = '💬 Chat with Us';
+                });
+            }
+        }, 100);
+        
+        // Function to open Messenger
+        chatButton.onclick = function() {
+            if (!messengerReady) {
+                alert('Chat is still loading, please wait...');
                 return;
             }
             
-            // Open the Messenger window
-            Genesys(\"command\", \"Messenger.open\", null,
+            window.Genesys('command', 'Messenger.open', null,
                 function() {
-                    console.log('✅ Messenger opened successfully');
+                    console.log('Messenger opened');
                 },
                 function(error) {
-                    console.error('❌ Failed to open Messenger:', error);
+                    console.error('Error opening Messenger:', error);
                     
                     // Try Launcher.show as fallback
-                    Genesys(\"command\", \"Launcher.show\", null,
+                    window.Genesys('command', 'Launcher.show', null,
                         function() {
-                            console.log('✅ Launcher shown successfully');
+                            console.log('Launcher shown');
                         },
-                        function(error2) {
-                            console.error('❌ Failed to show Launcher:', error2);
-                            alert('Unable to open chat: ' + error2);
+                        function(err) {
+                            console.error('Error showing launcher:', err);
                         }
                     );
                 }
             );
-        }
+        };
     </script>
 </body>
 </html>
