@@ -1,0 +1,64 @@
+
+<html>
+<head>
+<title>Genesys Cloud web messaging demo</title>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+  (function (g, e, n, es, ys) {
+    g['_genesysJs'] = e;
+    g[e] = g[e] || function () {
+      (g[e].q = g[e].q || []).push(arguments)
+    };
+    g[e].t = 1 * new Date();
+    g[e].c = es;
+    ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+  })(window, 'Genesys', 'https://apps.euw2.pure.cloud/genesys-bootstrap/genesys.min.js', {
+    environment: 'prod-euw2',
+    deploymentId: 'abdf5389-eedb-42dd-9a24-f56ac9ff6a72'
+  });
+</script>
+
+<script type="text/javascript">
+Genesys("command", "Database.set", {
+  messaging: {
+    customAttributes: {
+      "entryPoint": "BTW_HIGH_LEVEL_ESCALATION",
+    }
+  }
+});
+Genesys("subscribe", "MessagingService.conversationCleared", function(){
+    console.log("cleared");
+    Genesys("command", "Database.set", {
+        messaging: {
+          customAttributes: {
+            "entryPoint": "BTW_HIGH_LEVEL_ESCALATION",
+          }
+        }
+    });
+});
+
+</script>
+<script>
+
+  */
+
+  $("#disconnect").on("click", () => {
+    Genesys("command", "MessagingService.clearConversation");
+  });
+
+  $("#refresh").on("click", () => {
+    Genesys("command", "MessagingService.clearConversation");
+    location.reload();
+  });
+
+
+</script>
+</head>
+
+<body>
+<!--<button id="login">Login</button>-->
+<button id="disconnect">Disconnect</button>
+<button id="refresh">Clear conversation and refresh</button>
+
+</body>
