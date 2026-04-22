@@ -1,14 +1,51 @@
-
 <html>
 <head>
 <title>Genesys Cloud web messaging demo</title>
+
+<style>
+  body {
+    background-color: #1a2332; /* Nice dark blue */
+    color: #ffffff; /* White text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 40px;
+    margin: 0;
+  }
+  
+  h1 {
+    color: #66b3ff;
+    margin-bottom: 30px;
+  }
+  
+  button {
+    background-color: #0066cc;
+    color: white;
+    padding: 12px 24px;
+    margin: 10px 5px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  button:hover {
+    background-color: #0052a3;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+  
+  button:active {
+    transform: translateY(1px);
+  }
+</style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" charset="utf-8">
   (function (g, e, n, es, ys) {
     g['_genesysJs'] = e;
-    g[e] = g[e] || function () {
-      (g[e].q = g[e].q || []).push(arguments)
+    g[e] = g[e] <span class="ea-spoiler"> function () {
+      (g[e].q = g[e].q </span> []).push(arguments)
     };
     g[e].t = 1 * new Date();
     g[e].c = es;
@@ -27,6 +64,7 @@ Genesys("command", "Database.set", {
     }
   }
 });
+
 Genesys("subscribe", "MessagingService.conversationCleared", function(){
     console.log("cleared");
     Genesys("command", "Database.set", {
@@ -37,28 +75,25 @@ Genesys("subscribe", "MessagingService.conversationCleared", function(){
         }
     });
 });
-
 </script>
+
 <script>
+  $(document).ready(function() {
+    $("#disconnect").on("click", () => {
+      Genesys("command", "MessagingService.clearConversation");
+    });
 
-  */
-
-  $("#disconnect").on("click", () => {
-    Genesys("command", "MessagingService.clearConversation");
+    $("#refresh").on("click", () => {
+      Genesys("command", "MessagingService.clearConversation");
+      location.reload();
+    });
   });
-
-  $("#refresh").on("click", () => {
-    Genesys("command", "MessagingService.clearConversation");
-    location.reload();
-  });
-
-
 </script>
 </head>
 
 <body>
-<!--<button id="login">Login</button>-->
-<button id="disconnect">Disconnect</button>
-<button id="refresh">Clear conversation and refresh</button>
-
+  <h1>Genesys Messenger Demo</h1>
+  <button id="disconnect">Disconnect</button>
+  <button id="refresh">Clear conversation and refresh</button>
 </body>
+</html>
