@@ -1,69 +1,112 @@
 <!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-<meta charset=\"UTF-8\">
-<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-    <title>Messenger Test Site</title>
-    <title>Messenger Test Site - Home Page</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Messenger Test Site - Products page</title>
 
-<!-- Paste your Messenger snippet here -->
-<script type="text/javascript" charset="utf-8">     
-     ;(function (g, e, n, es, ys) {
-        g['_genesysJs'] = e
+  <script type="text/javascript" charset="utf-8">
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const entryPoint = params.get('entryPoint') || 'BTW_SYSTEM_SUPPORT_HELPDESK';
+
+      (function (g, e, n, es, ys) {
+        g['_genesysJs'] = e;
         g[e] = g[e] || function () {
-          (g[e].q = g[e].q || []).push(arguments)
-        }
-        g[e].t = 1 * new Date()
-        g[e].c = es
+          (g[e].q = g[e].q || []).push(arguments);
+        };
+        g[e].t = 1 * new Date();
+        g[e].c = es;
 
-        g[e].setData = () => {
+        g[e].setData = function () {
           g[e]('command', 'Database.set', {
             messaging: {
               customAttributes: {
-                cleanURL: document.location.origin + document.location.pathname,
-                fullURL: document.location.href,
-                entryPoint: 'BTW_BROADBAND_ONE'
+                cleanURL: window.location.origin + window.location.pathname,
+                fullURL: window.location.href,
+                entryPoint: entryPoint
               }
             }
-          })
-          console.log('SETDATA')
-        }
-        g[e].logData = () => g[e]('command', 'Database.get', d => console.log(JSON.stringify(d?.messaging?.customAttributes || {}, null, 2)))
-        let done
-        g[e]('subscribe', 'Messenger.ready', () => {
-          if (done) return
-          done = true
-          g[e]('subscribe', 'MessagingService.started', g[e].setData)
-          g[e]('subscribe', 'Messenger.opened', g[e].setData)
-        })
+          });
+          console.log('SETDATA', entryPoint);
+        };
 
-        ys = document.createElement('script')
-        ys.async = 1
-        ys.src = n
-        ys.charset = 'utf-8'
-        document.head.appendChild(ys)
+        g[e].logData = function () {
+          g[e]('command', 'Database.get', function (d) {
+            console.log(JSON.stringify(d?.messaging?.customAttributes || {}, null, 2));
+          });
+        };
+
+        let done = false;
+        g[e]('subscribe', 'Messenger.ready', function () {
+          if (done) return;
+          done = true;
+
+          g[e]('subscribe', 'MessagingService.started', g[e].setData);
+          g[e]('subscribe', 'Messenger.opened', g[e].setData);
+
+          g[e].setData();
+          g[e]('command', 'Messenger.open');
+        });
+
+        ys = document.createElement('script');
+        ys.async = 1;
+        ys.src = n;
+        ys.charset = 'utf-8';
+        document.head.appendChild(ys);
       })(window, 'Genesys', 'https://apps.euw2.pure.cloud/genesys-bootstrap/genesys.min.js', {
         environment: 'prod-euw2',
-        deploymentId: 'abdf5389-eedb-42dd-9a24-f56ac9ff6a72'
-      })
-</script>
-
-
-
+        deploymentId: 'b9b8d3e4-b88f-40e8-8787-883b243d14c1'
+      });
+    })();
+  </script>
 </head>
 <body>
-    <h1>🌐 Messenger Test Site</h1>
-    <h1>🌐 Messenger Test Site - Home Page</h1>
-<p>This site is hosted on GitHub Pages for testing.</p>
+  <h1>🌐 Messenger Test Site - Products page</h1>
+  <p>This site is hosted on GitHub Pages for testing.</p>
 
-<nav>
-<a href="index.html">Home</a> |
-<a href="products.html">EE Chat</a> |
-<a href="contact.html">Contact</a>   |
-<a href="demo.html">Demo</a>    
-</nav>
+  <form id="entryPointForm" style="margin: 16px 0;">
+    <label for="entryPointInput"><strong>Entry Point:</strong></label>
+    <input
+      id="entryPointInput"
+      name="entryPoint"
+      type="text"
+      value="EE_MAIN"
+      style="margin-left: 8px; padding: 6px 8px; width: 220px;"
+    />
+    <button type="submit" style="margin-left: 8px; padding: 6px 12px;">
+      Apply & Reload
+    </button>
+  </form>
 
-<h2>Test Journey Tracking</h2>
-<p>Click the links above to navigate between pages and test Predictive Engagement tracking.</p>
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="products.html">Products</a> |
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <h2>Test Journey Tracking</h2>
+  <p>Click the links above to navigate between pages and test Predictive Engagement tracking.</p>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const entryPoint = params.get('entryPoint') || 'BTW_SYSTEM_SUPPORT_HELPDESK';
+      const input = document.getElementById('entryPointInput');
+      const form = document.getElementById('entryPointForm');
+
+      input.value = entryPoint;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const value = input.value.trim() || 'BTW_SYSTEM_SUPPORT_HELPDESK';
+
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set('entryPoint', value);
+
+        window.location.href = nextUrl.toString();
+      });
+    })();
+  </script>
 </body>
 </html>
