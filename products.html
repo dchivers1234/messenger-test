@@ -1,39 +1,58 @@
 <!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-    <meta charset=\"UTF-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Messenger Test Site - Products page</title>
     
 <!-- Paste your Messenger snippet here -->
 <script type="text/javascript" charset="utf-8">     
      ;(function (g, e, n, es, ys) {
         g['_genesysJs'] = e
-        g[e] = g[e] || function () {
-          (g[e].q = g[e].q || []).push(arguments)
+        g[e] = g[e] <span class="ea-spoiler"> function () {
+          (g[e].q = g[e].q </span> []).push(arguments)
         }
         g[e].t = 1 * new Date()
         g[e].c = es
 
-        g[e].setData = () => {
+        g[e].setData = (customEntryPoint) => {
+          // Get entryPoint from parameter or input field or default
+          const entryPoint = customEntryPoint <span class="ea-spoiler"> 
+                            document.getElementById('entryPointInput')?.value </span> 
+                            'EE_MAIN'
+          
           g[e]('command', 'Database.set', {
             messaging: {
               customAttributes: {
                 cleanURL: document.location.origin + document.location.pathname,
                 fullURL: document.location.href,
-                entryPoint: 'EE_MAIN'
+                entryPoint: entryPoint
               }
             }
           })
-          console.log('SETDATA')
+          console.log('SETDATA - EntryPoint:', entryPoint)
         }
-        g[e].logData = () => g[e]('command', 'Database.get', d => console.log(JSON.stringify(d?.messaging?.customAttributes || {}, null, 2)))
+        
+        g[e].logData = () => g[e]('command', 'Database.get', d => console.log(JSON.stringify(d?.messaging?.customAttributes <span class="ea-spoiler"> null, null, 2)))
+        
+        // Function to manually trigger deployment with custom entryPoint
+        g[e].deployWithEntryPoint = () => {
+          const entryPointValue = document.getElementById('entryPointInput')?.value
+          if (!entryPointValue) {
+            alert('Please enter an Entry Point value')
+            return
+          }
+          g[e].setData(entryPointValue)
+          alert('Entry Point set to: ' + entryPointValue)
+          console.log('Custom Entry Point deployed:', entryPointValue)
+        }
+        
         let done
         g[e]('subscribe', 'Messenger.ready', () => {
           if (done) return
           done = true
-          g[e]('subscribe', 'MessagingService.started', g[e].setData)
-          g[e]('subscribe', 'Messenger.opened', g[e].setData)
+          g[e]('subscribe', 'MessagingService.started', () => g[e].setData())
+          g[e]('subscribe', 'Messenger.opened', () => g[e].setData())
         })
 
         ys = document.createElement('script')
@@ -46,9 +65,50 @@
         deploymentId: 'a6c7a023-1e5a-4c5d-b329-fb43ac489980'
       })
 </script>
-   
 
-    
+<style>
+    .entrypoint-container {
+        margin: 20px 0;
+        padding: 20px;
+        border: 2px solid #0073e6;
+        border-radius: 8px;
+        background-color: #f0f8ff;
+    }
+    .entrypoint-input {
+        padding: 10px;
+        font-size: 16px;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .entrypoint-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #0073e6;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    .entrypoint-button:hover {
+        background-color: #005bb5;
+    }
+    .log-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    .log-button:hover {
+        background-color: #218838;
+    }
+</style>
+   
 </head>
 <body>
     <h1>🌐 Messenger Test Site - Products page</h1>
@@ -60,7 +120,40 @@
         <a href="contact.html">Contact</a>
     </nav>
     
+    <!-- Entry Point Configuration -->
+    <div class="entrypoint-container">
+        <h2>🎯 Set Entry Point</h2>
+        <p>Enter a custom entry point value and click "Deploy" to set it:</p>
+        <input 
+            type="text" 
+            id="entryPointInput" 
+            class="entrypoint-input" 
+            placeholder="Enter Entry Point (e.g., EE_MAIN)" 
+            value="EE_MAIN"
+        />
+        <button 
+            class="entrypoint-button" 
+            onclick="window.Genesys.deployWithEntryPoint()"
+        >
+            🚀 Deploy Entry Point
+        </button>
+        <button 
+            class="log-button" 
+            onclick="window.Genesys.logData()"
+        >
+            📋 Log Current Data
+        </button>
+    </div>
+    
     <h2>Test Journey Tracking</h2>
     <p>Click the links above to navigate between pages and test Predictive Engagement tracking.</p>
+    
+    <h3>📝 Instructions:</h3>
+    <ol>
+        <li>Enter your desired Entry Point value in the input field above</li>
+        <li>Click "Deploy Entry Point" to set the custom attribute</li>
+        <li>Click "Log Current Data" to see the current configuration in the console</li>
+        <li>Open the Messenger widget to test the configuration</li>
+    </ol>
 </body>
 </html>
