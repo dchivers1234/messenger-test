@@ -9,7 +9,7 @@
     (function () {
       const params = new URLSearchParams(window.location.search);
 
-      const entryPoint = params.get('entryPoint') || 'BTW_SYSTEM_SUPPORT_HELPDESK';
+      const entryPoint = params.get('entryPoint') || '';
       const deploymentId = params.get('deploymentId') || 'xxxxxxx';
 
       (function (g, e, n, es, ys) {
@@ -21,15 +21,21 @@
         g[e].c = es;
 
         g[e].setData = function () {
+          const customAttributes = {
+            cleanURL: window.location.origin + window.location.pathname,
+            fullURL: window.location.href
+          };
+
+          if (entryPoint) {
+            customAttributes.entryPoint = entryPoint;
+          }
+
           g[e]('command', 'Database.set', {
             messaging: {
-              customAttributes: {
-                cleanURL: window.location.origin + window.location.pathname,
-                fullURL: window.location.href,
-                entryPoint: entryPoint
-              }
+              customAttributes
             }
           });
+
           console.log('SETDATA', entryPoint);
         };
 
@@ -96,7 +102,7 @@
     (function () {
       const params = new URLSearchParams(window.location.search);
 
-      const entryPoint = params.get('entryPoint') || 'BTW_SYSTEM_SUPPORT_HELPDESK';
+      const entryPoint = params.get('entryPoint') || '';
       const deploymentId = params.get('deploymentId') || 'xxxxxxx';
 
       const entryInput = document.getElementById('entryPointInput');
@@ -109,11 +115,17 @@
       form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const newEntry = entryInput.value.trim() || 'BTW_SYSTEM_SUPPORT_HELPDESK';
+        const newEntry = entryInput.value.trim();
         const newDeployment = deploymentInput.value.trim() || 'xxxxxxx';
 
         const nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.set('entryPoint', newEntry);
+
+        if (newEntry) {
+          nextUrl.searchParams.set('entryPoint', newEntry);
+        } else {
+          nextUrl.searchParams.delete('entryPoint');
+        }
+
         nextUrl.searchParams.set('deploymentId', newDeployment);
 
         window.location.href = nextUrl.toString();
